@@ -1,0 +1,66 @@
+name: Publish
+
+# Both packages share one version and are released by pushing a tag:
+#
+#   git tag -a v0.1.0 -m "v0.1.0" && git push origin v0.1.0
+#
+# Authentication is npm trusted publishing over OIDC: no npm token lives in
+# this repo or in GitHub secrets. `id-token: write` below is what lets npm
+# verify this workflow, and it signs the provenance statement.
+#
+# One-time setup on npmjs.com, for EACH package (ktemia and @ktemia/ai-sdk):
+#   package settings > Trusted Publisher > GitHub Actions,
+#   owner Ktemiaa, repository ktemia-agent-toolkit, workflow publish.yml.
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      # Trusted publishing needs npm >= 11.5.1.
+      - name: Ensure npm supports OIDC
+        run: npm install -g npm@latest
+
+      - run: npm ci
+
+      - name: Assert the tag matches both package versions
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          for pkg in packages/ktemia packages/ai-sdk; do
+            version="$(node -p "require('./$pkg/package.json').version")"
+            if [ "$tag" != "$version" ]; then
+              echo "tag $GITHUB_REF_NAME does not match $pkg/package.json $version" >&2
+              exit 1
+            fi
+          done
+
+      - name: Typecheck, build, and test
+        run: npm run typecheck && npm test
+
+      # The core goes first: @ktemia/ai-sdk depends on it. A version that is
+      # already on npm is skipped, so a re-run after a partial failure works.
+      - name: Publish with provenance
+        run: |
+          for pkg in packages/ktemia packages/ai-sdk; do
+            name="$(node -p "require('./$pkg/package.json').name")"
+            version="$(node -p "require('./$pkg/package.json').version")"
+            if npm view "$name@$version" version >/dev/null 2>&1; then
+              echo "$name@$version is already published, skipping"
+              continue
+            fi
+            npm publish --workspace "$pkg" --provenance --access public
+          done

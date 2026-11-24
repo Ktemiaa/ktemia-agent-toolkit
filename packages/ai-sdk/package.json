@@ -1,0 +1,74 @@
+{
+  "name": "@ktemia/ai-sdk",
+  "version": "0.1.0",
+  "description": "Ktemia travel search tools for the Vercel AI SDK: let your agent compare flights, hotels, and rental cars across 100+ providers",
+  "license": "MIT",
+  "author": "Ktemia <contact@ktemia.com>",
+  "homepage": "https://www.ktemia.com/docs/vercel-ai-sdk/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ktemiaa/ktemia-agent-toolkit.git",
+    "directory": "packages/ai-sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/Ktemiaa/ktemia-agent-toolkit/issues"
+  },
+  "keywords": [
+    "ai-sdk",
+    "vercel-ai-sdk",
+    "ai",
+    "agent",
+    "tools",
+    "ktemia",
+    "travel",
+    "flights",
+    "hotels",
+    "car-rental",
+    "flight-search"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ktemia": "^0.1.0"
+  },
+  "peerDependencies": {
+    "ai": "^6.0.0 || ^7.0.0",
+    "zod": "^3.25.76 || ^4.1.8"
+  },
+  "devDependencies": {
+    "ai": "^7.0.0",
+    "zod": "^4.1.8"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

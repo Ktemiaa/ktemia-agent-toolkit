@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      # Builds both packages, then runs the unit tests with mocked HTTP and a
+      # mock model driving a real generateText loop.
+      - name: Build and test
+        run: npm test
+
+      # The docs examples compile against the built packages, as a user would import them.
+      - name: Typecheck examples
+        run: npx tsc --noEmit -p examples
+
+      - name: The core has no runtime dependencies
+        run: |
+          deps="$(node -p 'Object.keys(require("./packages/ktemia/package.json").dependencies || {}).join(" ")')"
+          if [ -n "$deps" ]; then
+            echo "packages/ktemia must stay dependency-free: $deps" >&2
+            exit 1
+          fi

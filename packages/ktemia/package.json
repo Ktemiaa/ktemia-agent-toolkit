@@ -1,0 +1,61 @@
+{
+  "name": "ktemia",
+  "version": "0.1.0",
+  "description": "Official TypeScript client for the Ktemia travel search API: compare flights, hotels, and rental cars across 100+ providers",
+  "license": "MIT",
+  "author": "Ktemia <contact@ktemia.com>",
+  "homepage": "https://www.ktemia.com/docs/api/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ktemiaa/ktemia-agent-toolkit.git",
+    "directory": "packages/ktemia"
+  },
+  "bugs": {
+    "url": "https://github.com/Ktemiaa/ktemia-agent-toolkit/issues"
+  },
+  "keywords": [
+    "ktemia",
+    "travel",
+    "flights",
+    "hotels",
+    "car-rental",
+    "flight-search",
+    "travel-api",
+    "sdk"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "sync-spec": "node ../../scripts/sync-spec.mjs"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

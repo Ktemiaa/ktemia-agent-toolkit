@@ -1,0 +1,28 @@
+{
+  "name": "ktemia-agent-toolkit",
+  "private": true,
+  "description": "Ktemia travel search for AI agents: the ktemia client and its framework adapters",
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "packages/ktemia",
+    "packages/ai-sdk"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "test": "npm run build && vitest run",
+    "test:live": "npm run build && vitest run --config vitest.live.config.ts",
+    "sync-spec": "node scripts/sync-spec.mjs"
+  },
+  "devDependencies": {
+    "@ai-sdk/google": "^4.0.0",
+    "@types/node": "^22.0.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
