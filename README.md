@@ -42,7 +42,7 @@ npm run test:live   # real API and a real model; needs .env (see .env.example)
 - `packages/ai-sdk` wraps it as AI SDK tools.
 - Tool descriptions come from `packages/ktemia/src/tools.json`, shared with the MCP server. Update it with `npm run sync-spec`.
 
-Releases: bump both package versions, then push a `v*` tag. GitHub Actions publishes with npm provenance.
+Releases: bump both package versions, then push a `v*` tag. GitHub Actions publishes with npm provenance. See [PUBLISHING.md](PUBLISHING.md), including the one-time bootstrap each new package name needs before OIDC releases work.
 
 ## License
 
