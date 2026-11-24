@@ -24,12 +24,16 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
+          # setup-node caches dependencies by default. A release must resolve
+          # every tarball from the registry, so nothing cached can reach a
+          # published artifact.
+          package-manager-cache: false
 
       # Trusted publishing needs npm >= 11.5.1.
       - name: Ensure npm supports OIDC
