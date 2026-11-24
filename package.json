@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces",
-    "typecheck": "npm run typecheck --workspaces",
+    "typecheck": "npm run build --workspace packages/ktemia && npm run typecheck --workspaces",
     "test": "npm run build && vitest run",
     "test:live": "npm run build && vitest run --config vitest.live.config.ts",
     "sync-spec": "node scripts/sync-spec.mjs"
