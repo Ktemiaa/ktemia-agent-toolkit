@@ -15,7 +15,10 @@ import { ktemiaTools } from "../../packages/ai-sdk/src/index.js";
 
 const ktemiaKey = process.env.KTEMIA_API_KEY;
 const modelKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-const MODEL = process.env.KTEMIA_LIVE_MODEL ?? "gemini-2.5-flash";
+// gemini-2.5-flash is closed to new API keys, and the full flash models are
+// often overloaded on the free tier. 3.5-flash-lite runs the whole loop in
+// about 13 seconds; override with KTEMIA_LIVE_MODEL.
+const MODEL = process.env.KTEMIA_LIVE_MODEL ?? "gemini-3.5-flash-lite";
 
 function inDays(days: number): string {
   const d = new Date();
