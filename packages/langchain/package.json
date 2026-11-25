@@ -1,0 +1,74 @@
+{
+  "name": "@ktemia/langchain",
+  "version": "0.1.1",
+  "description": "Ktemia travel search tools for LangChain.js: let your agent compare flights, hotels, and rental cars across 100+ providers",
+  "license": "MIT",
+  "author": "Ktemia <contact@ktemia.com>",
+  "homepage": "https://www.ktemia.com/docs/langchain/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ktemiaa/ktemia-agent-toolkit.git",
+    "directory": "packages/langchain"
+  },
+  "bugs": {
+    "url": "https://github.com/Ktemiaa/ktemia-agent-toolkit/issues"
+  },
+  "keywords": [
+    "langchain",
+    "langchainjs",
+    "@langchain/core",
+    "agent",
+    "tools",
+    "ktemia",
+    "travel",
+    "flights",
+    "hotels",
+    "car-rental",
+    "flight-search"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ktemia": "^0.1.1"
+  },
+  "peerDependencies": {
+    "@langchain/core": "^1.0.0",
+    "zod": "^3.25.76 || ^4.1.8"
+  },
+  "devDependencies": {
+    "@langchain/core": "^1.5.1",
+    "zod": "^4.1.8"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

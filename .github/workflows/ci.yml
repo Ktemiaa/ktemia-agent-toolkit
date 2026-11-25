@@ -28,7 +28,7 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
-      # Builds both packages, then runs the unit tests with mocked HTTP and a
+      # Builds every package, then runs the unit tests with mocked HTTP and a
       # mock model driving a real generateText loop.
       - name: Build and test
         run: npm test

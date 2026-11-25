@@ -1,8 +1,8 @@
 # Publishing
 
-Both packages share one version and are released together by pushing a `v*`
+All three packages share one version and are released together by pushing a `v*`
 tag. `.github/workflows/publish.yml` then typechecks, builds, tests, and
-publishes `ktemia` followed by `@ktemia/ai-sdk`. There is no npm token in this
+publishes `ktemia` followed by `@ktemia/ai-sdk` and `@ktemia/langchain`. There is no npm token in this
 repo, in GitHub secrets, or on anyone's machine: releases authenticate with
 npm trusted publishing over OIDC, and npm attaches a provenance attestation
 tying each file to the commit and workflow run that built it.
@@ -26,7 +26,7 @@ release carrying actual code still comes from CI with provenance.
    ```bash
    npm login                       # opens a browser; 2FA here
    cd "$(mktemp -d)"
-   for name in ktemia @ktemia/ai-sdk; do
+   for name in ktemia @ktemia/ai-sdk @ktemia/langchain; do
      mkdir -p placeholder && cd placeholder
      cat > package.json <<EOF
    { "name": "$name", "version": "0.0.0",
@@ -43,6 +43,7 @@ release carrying actual code still comes from CI with provenance.
    ```bash
    npm deprecate ktemia@0.0.0 "Placeholder. Install 0.1.0 or later."
    npm deprecate @ktemia/ai-sdk@0.0.0 "Placeholder. Install 0.1.0 or later."
+   npm deprecate @ktemia/langchain@0.0.0 "Placeholder. Install 0.1.1 or later."
    ```
 
 2. **Configure the trusted publisher for each package.** Needs npm >= 11.15.0
@@ -52,6 +53,8 @@ release carrying actual code still comes from CI with provenance.
    npm trust github ktemia --repo Ktemiaa/ktemia-agent-toolkit \
      --file publish.yml --allow-publish
    npm trust github @ktemia/ai-sdk --repo Ktemiaa/ktemia-agent-toolkit \
+     --file publish.yml --allow-publish
+   npm trust github @ktemia/langchain --repo Ktemiaa/ktemia-agent-toolkit \
      --file publish.yml --allow-publish
    ```
 
@@ -81,13 +84,15 @@ working; token-based publishing stops being possible.
 
 ## Release
 
-1. **Bump the version in both packages.** They always move together, even when
+1. **Bump the version in all three packages.** They always move together, even when
    only one changed:
 
    - `packages/ktemia/package.json`
    - `packages/ktemia/src/client.ts` (`VERSION`)
    - `packages/ai-sdk/package.json`, including the `ktemia` dependency range
    - `packages/ai-sdk/src/index.ts` (`VERSION`)
+   - `packages/langchain/package.json`, including the `ktemia` dependency range
+   - `packages/langchain/src/index.ts` (`VERSION`)
 
    Then `npm install --package-lock-only` so the lockfile follows.
 
@@ -115,9 +120,9 @@ working; token-based publishing stops being possible.
    so a tag pushed ahead of a workflow change releases with the old workflow.
    Never move a tag once pushed; cut the next version instead.
 
-5. **Watch it:** `gh run watch`. The job asserts the tag matches both package
-   versions before uploading, publishes `ktemia` first because `@ktemia/ai-sdk`
-   depends on it, and skips any version already on npm, so re-running after a
+5. **Watch it:** `gh run watch`. The job asserts the tag matches every package
+   version before uploading, publishes `ktemia` first because both adapters
+   depend on it, and skips any version already on npm, so re-running after a
    partial failure is safe.
 
 npm takes a few minutes to serve a new version and keeps showing the previous

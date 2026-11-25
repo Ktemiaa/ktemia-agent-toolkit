@@ -6,7 +6,8 @@
   "type": "module",
   "workspaces": [
     "packages/ktemia",
-    "packages/ai-sdk"
+    "packages/ai-sdk",
+    "packages/langchain"
   ],
   "scripts": {
     "build": "npm run build --workspaces",
@@ -17,7 +18,9 @@
   },
   "devDependencies": {
     "@ai-sdk/google": "^4.0.0",
+    "@langchain/core": "^1.5.1",
     "@types/node": "^22.0.0",
+    "langchain": "^1.6.8",
     "tsup": "^8.5.0",
     "typescript": "^5.9.0",
     "vitest": "^3.2.0"

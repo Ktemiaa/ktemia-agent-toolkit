@@ -25,7 +25,7 @@ import {
   checkText,
 } from "./validate.js";
 
-export const VERSION = "0.1.0";
+export const VERSION = "0.1.1";
 export const DEFAULT_BASE_URL = "https://api.ktemia.com";
 export const API_KEYS_URL = "https://app.ktemia.com/api-keys";
 

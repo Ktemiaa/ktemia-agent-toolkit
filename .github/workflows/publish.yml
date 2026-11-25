@@ -1,6 +1,6 @@
 name: Publish
 
-# Both packages share one version and are released by pushing a tag:
+# All three packages share one version and are released by pushing a tag:
 #
 #   git tag -a v0.1.0 -m "v0.1.0" && git push origin v0.1.0
 #
@@ -8,7 +8,7 @@ name: Publish
 # this repo or in GitHub secrets. `id-token: write` below is what lets npm
 # verify this workflow, and it signs the provenance statement.
 #
-# One-time setup on npmjs.com, for EACH package (ktemia and @ktemia/ai-sdk):
+# One-time setup on npmjs.com, for EACH package (ktemia, @ktemia/ai-sdk, @ktemia/langchain):
 #   package settings > Trusted Publisher > GitHub Actions,
 #   owner Ktemiaa, repository ktemia-agent-toolkit, workflow publish.yml.
 
@@ -41,10 +41,10 @@ jobs:
 
       - run: npm ci
 
-      - name: Assert the tag matches both package versions
+      - name: Assert the tag matches every package version
         run: |
           tag="${GITHUB_REF_NAME#v}"
-          for pkg in packages/ktemia packages/ai-sdk; do
+          for pkg in packages/ktemia packages/ai-sdk packages/langchain; do
             version="$(node -p "require('./$pkg/package.json').version")"
             if [ "$tag" != "$version" ]; then
               echo "tag $GITHUB_REF_NAME does not match $pkg/package.json $version" >&2
@@ -55,11 +55,11 @@ jobs:
       - name: Typecheck, build, and test
         run: npm run typecheck && npm test
 
-      # The core goes first: @ktemia/ai-sdk depends on it. A version that is
+      # The core goes first: both adapters depend on it. A version that is
       # already on npm is skipped, so a re-run after a partial failure works.
       - name: Publish with provenance
         run: |
-          for pkg in packages/ktemia packages/ai-sdk; do
+          for pkg in packages/ktemia packages/ai-sdk packages/langchain; do
             name="$(node -p "require('./$pkg/package.json').name")"
             version="$(node -p "require('./$pkg/package.json').version")"
             if npm view "$name@$version" version >/dev/null 2>&1; then

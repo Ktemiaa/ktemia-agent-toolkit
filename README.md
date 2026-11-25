@@ -6,8 +6,9 @@ Live flight, hotel, and rental car prices from 100+ providers for AI agents and 
 |---|---|---|
 | [`ktemia`](packages/ktemia) | Any TypeScript or JavaScript app | [![npm](https://img.shields.io/npm/v/ktemia)](https://www.npmjs.com/package/ktemia) |
 | [`@ktemia/ai-sdk`](packages/ai-sdk) | [Vercel AI SDK](https://ai-sdk.dev/) agents | [![npm](https://img.shields.io/npm/v/@ktemia/ai-sdk)](https://www.npmjs.com/package/@ktemia/ai-sdk) |
+| [`@ktemia/langchain`](packages/langchain) | [LangChain.js](https://docs.langchain.com/) agents | [![npm](https://img.shields.io/npm/v/@ktemia/langchain)](https://www.npmjs.com/package/@ktemia/langchain) |
 | [`ktemia`](python/ktemia) (Python) | Any Python app, sync or async | [![PyPI](https://img.shields.io/pypi/v/ktemia)](https://pypi.org/project/ktemia/) |
-| [`langchain-ktemia`](python/langchain-ktemia) | [LangChain](https://www.langchain.com/) agents | [![PyPI](https://img.shields.io/pypi/v/langchain-ktemia)](https://pypi.org/project/langchain-ktemia/) |
+| [`langchain-ktemia`](python/langchain-ktemia) | [LangChain](https://www.langchain.com/) agents (Python) | [![PyPI](https://img.shields.io/pypi/v/langchain-ktemia)](https://pypi.org/project/langchain-ktemia/) |
 
 Using Claude, Cursor, or ChatGPT instead? See the [Ktemia MCP server](https://github.com/Ktemiaa/ktemia-mcp).
 
@@ -55,6 +56,7 @@ npm run test:live   # real API and a real model; needs .env (see .env.example)
 
 - `packages/ktemia` is the client. It has no runtime dependencies and must stay that way.
 - `packages/ai-sdk` wraps it as AI SDK tools.
+- `packages/langchain` wraps it as LangChain.js tools.
 - Tool descriptions come from `packages/ktemia/src/tools.json`, shared with the MCP server. Update it with `npm run sync-spec`.
 
 Python (`python/ktemia`, `python/langchain-ktemia`):
@@ -67,7 +69,7 @@ uv run pytest -q tests/integration_tests  # real API; needs KTEMIA_API_KEY
 
 `npm run sync-spec` also updates the Python copy of `tools.json`, and a test fails if the two drift.
 
-Releases: bump both package versions, then push a `v*` tag. GitHub Actions publishes with npm provenance. Python releases use a `py-v*` tag and PyPI trusted publishing (`publish-python.yml`). See [PUBLISHING.md](PUBLISHING.md), including the one-time bootstrap each new package name needs before OIDC releases work.
+Releases: bump all three package versions, then push a `v*` tag. GitHub Actions publishes with npm provenance. Python releases use a `py-v*` tag and PyPI trusted publishing (`publish-python.yml`). See [PUBLISHING.md](PUBLISHING.md), including the one-time bootstrap each new package name needs before OIDC releases work.
 
 ## License
 
