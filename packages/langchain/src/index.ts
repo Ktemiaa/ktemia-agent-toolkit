@@ -48,6 +48,17 @@ const SEARCH_NOTES = ["askDoNotGuessNote", "tokenLifetimeNote", "quotaNote", "se
 
 /** Accepts ids a model copies as numbers: "29230" or 29230. */
 const id = () => z.union([z.string().min(1), z.number()]);
+/**
+ * A price above zero. Checked with refine, not `.positive()`: `.positive()`
+ * emits `exclusiveMinimum`, which Gemini's API rejects outright ("Unknown
+ * name exclusiveMinimum"), and @langchain/google-genai passes it through.
+ */
+const price = (n: ToolName, field: string) =>
+  z
+    .number()
+    .refine((v) => v > 0, { message: "Must be greater than 0" })
+    .optional()
+    .describe(p(n, field));
 const country = (n: ToolName) => z.string().length(2).optional().describe(p(n, "country"));
 const sortOrder = (n: ToolName) => z.enum(["asc", "desc"]).optional().describe(p(n, "sortOrder"));
 const nextToken = (n: ToolName) => z.string().optional().describe(p(n, "nextToken"));
@@ -85,7 +96,7 @@ const flightSchema = z.object({
   maxStops: z.number().int().min(0).max(2).optional().describe(p(F, "maxStops")),
   airlines: z.array(z.string()).optional().describe(p(F, "airlines")),
   alliances: z.array(z.enum(["oneworld", "skyteam", "starAlliance"])).optional().describe(p(F, "alliances")),
-  maxPrice: z.number().positive().optional().describe(p(F, "maxPrice")),
+  maxPrice: price(F, "maxPrice"),
   sortBy: z.enum(["bestValue", "price", "duration", "departure", "arrival"]).optional().describe(p(F, "sortBy")),
   sortOrder: sortOrder(F),
   country: country(F),
@@ -102,7 +113,7 @@ const hotelSchema = z.object({
   childAges: z.array(z.number().int().min(0).max(17)).optional().describe(p(H, "childAges")),
   minStars: z.number().int().min(2).max(5).optional().describe(p(H, "minStars")),
   minRating: z.number().optional().describe(p(H, "minRating")),
-  maxPrice: z.number().positive().optional().describe(p(H, "maxPrice")),
+  maxPrice: price(H, "maxPrice"),
   freeCancellation: z.boolean().optional().describe(p(H, "freeCancellation")),
   amenities: z.array(z.string()).optional().describe(p(H, "amenities")),
   providers: z.array(z.string()).optional().describe(p(H, "providers")),
@@ -127,7 +138,7 @@ const carSchema = z.object({
   driverAge: z.number().int().min(18).max(99).optional().describe(p(C, "driverAge")),
   carClass: z.enum(carClasses).optional().describe(p(C, "carClass")),
   transmission: z.enum(["automatic", "manual"]).optional().describe(p(C, "transmission")),
-  maxPrice: z.number().positive().optional().describe(p(C, "maxPrice")),
+  maxPrice: price(C, "maxPrice"),
   providers: z.array(z.string()).optional().describe(p(C, "providers")),
   agencies: z.array(z.string()).optional().describe(p(C, "agencies")),
   sortBy: z.enum(["bestValue", "price", "rating", "distance"]).optional().describe(p(C, "sortBy")),

@@ -1,4 +1,5 @@
 import { ToolMessage } from "@langchain/core/messages";
+import { toJsonSchema } from "@langchain/core/utils/json_schema";
 import { describe, expect, it } from "vitest";
 import { Ktemia, TOOL_NAMES, toolDescription } from "../packages/ktemia/src/index.js";
 import {
@@ -30,6 +31,16 @@ describe("tool set", () => {
   it("KtemiaToolkit returns the same tools", () => {
     const toolkit = new KtemiaToolkit({ apiKey: "k" });
     expect(toolkit.getTools().map((t) => t.name).sort()).toEqual([...TOOL_NAMES].sort());
+  });
+
+  // @langchain/google-genai sends tool schemas to Gemini as they are, and
+  // Gemini rejects the whole request on keywords it does not know.
+  it("emits no JSON Schema keywords Gemini rejects", () => {
+    const rejected = ["exclusiveMinimum", "exclusiveMaximum"];
+    for (const t of ktemiaTools({ apiKey: "k" })) {
+      const schema = JSON.stringify(toJsonSchema(t.schema));
+      for (const keyword of rejected) expect(schema, `${t.name} uses ${keyword}`).not.toContain(`"${keyword}"`);
+    }
   });
 
   it("can be built without a key, so importing it never breaks a build", () => {
@@ -108,6 +119,9 @@ describe("errors the model can act on", () => {
       searchFlights({ client }).invoke({ origin: "LAX", destination: "LON", departureDate: daysFromNow(30), maxStops: 3 }),
     ).rejects.toThrow();
     await expect(searchHotels({ client }).invoke({ location: "1", minStars: 1 })).rejects.toThrow();
+    await expect(
+      searchFlights({ client }).invoke({ origin: "LAX", destination: "LON", departureDate: daysFromNow(30), maxPrice: 0 }),
+    ).rejects.toThrow();
     expect(sent).toHaveLength(0);
   });
 
