@@ -148,3 +148,17 @@ curl -s "https://registry.npmjs.org/-/npm/v1/attestations/ktemia@0.1.0" | head -
   install and leaves pinned installs working.
 - If one package published and the other failed, fix the cause and re-run the
   job. It uses the same tagged commit and skips what is already on npm.
+
+## Python packages (`ktemia`, `langchain-ktemia`)
+
+Released together from `.github/workflows/publish-python.yml`, separately from the npm packages.
+
+**One-time setup on pypi.org**, for each of `ktemia` and `langchain-ktemia`: Account → Publishing → **Add a pending publisher** (the projects do not exist yet) → GitHub, owner `Ktemiaa`, repository `ktemia-agent-toolkit`, workflow `publish-python.yml`, environment `pypi`. Then create the `pypi` environment under the repository's Settings → Environments.
+
+**Release:**
+
+1. Bump `version` in `python/ktemia/pyproject.toml` and `python/langchain-ktemia/pyproject.toml`, and `VERSION` in each package's `_version.py`.
+2. Push to `main` and wait for the Python CI.
+3. `git tag -a py-v0.1.1 -m "py-v0.1.1" && git push origin py-v0.1.1`
+
+The workflow checks the tag matches both versions, runs lint and tests, builds both packages, and publishes them with `skip-existing`, so a re-run after a partial failure is safe.

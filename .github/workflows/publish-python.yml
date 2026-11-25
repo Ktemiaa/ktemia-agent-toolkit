@@ -1,0 +1,71 @@
+name: Publish (Python)
+
+# Both Python packages share one version and are released by pushing a tag:
+#
+#   git tag -a py-v0.1.0 -m "py-v0.1.0" && git push origin py-v0.1.0
+#
+# Authentication is PyPI trusted publishing over OIDC: no token anywhere.
+# One-time setup on pypi.org, for EACH project (ktemia and langchain-ktemia):
+#   Publishing > Add a trusted publisher > GitHub,
+#   owner Ktemiaa, repository ktemia-agent-toolkit,
+#   workflow publish-python.yml, environment pypi.
+# For a project that does not exist yet, add it as a "pending publisher".
+
+on:
+  push:
+    tags: ['py-v*']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Assert the tag matches both package versions
+        run: |
+          tag="${GITHUB_REF_NAME#py-v}"
+          for pkg in ktemia langchain-ktemia; do
+            version="$(sed -n 's/^version = "\(.*\)"/\1/p' python/$pkg/pyproject.toml | head -1)"
+            if [ "$tag" != "$version" ]; then
+              echo "tag $GITHUB_REF_NAME does not match python/$pkg/pyproject.toml $version" >&2
+              exit 1
+            fi
+          done
+
+      - name: Test
+        run: |
+          for pkg in ktemia langchain-ktemia; do
+            (cd python/$pkg && uvx ruff check src tests && uv run pytest -q tests --ignore=tests/integration_tests)
+          done
+
+      # The core goes first in dist/ order: langchain-ktemia depends on it.
+      - name: Build
+        run: |
+          mkdir -p dist
+          for pkg in ktemia langchain-ktemia; do
+            (cd python/$pkg && uv build --out-dir ../../dist)
+          done
+          ls -l dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+    permissions:
+      id-token: write # OIDC: how PyPI authenticates this workflow
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      # skip-existing makes a re-run after a partial failure safe.
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true

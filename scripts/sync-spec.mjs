@@ -16,5 +16,9 @@ if (!existsSync(source)) {
   console.error(`No spec at ${source}. Set KTEMIA_MCP_DIR to a ktemia-mcp checkout.`);
   process.exit(1);
 }
-copyFileSync(source, target);
-console.log(`Copied ${source} -> ${target}`);
+// The Python packages ship their own copy; keep every copy identical.
+const pyTarget = join(root, "python", "ktemia", "src", "ktemia", "tools.json");
+for (const dest of [target, pyTarget]) {
+  copyFileSync(source, dest);
+  console.log(`Copied ${source} -> ${dest}`);
+}

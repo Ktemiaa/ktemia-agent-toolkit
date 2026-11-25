@@ -1,0 +1,47 @@
+[project]
+name = "ktemia"
+version = "0.1.0"
+description = "The official Python client for the Ktemia travel search API: compare flights, hotels, and rental cars across airlines, booking sites and rental companies"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Ktemia", email = "contact@ktemia.com" }]
+requires-python = ">=3.10"
+keywords = ["ktemia", "travel", "flights", "hotels", "car-rental", "flight-search", "api", "sdk"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Typing :: Typed",
+  "Topic :: Software Development :: Libraries",
+]
+dependencies = ["httpx>=0.27,<1"]
+
+[project.urls]
+Homepage = "https://www.ktemia.com"
+Documentation = "https://www.ktemia.com/docs/api/"
+Repository = "https://github.com/Ktemiaa/ktemia-agent-toolkit"
+Issues = "https://github.com/Ktemiaa/ktemia-agent-toolkit/issues"
+
+[dependency-groups]
+dev = ["pytest>=8", "pytest-asyncio>=0.24", "ruff>=0.8"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ktemia"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"

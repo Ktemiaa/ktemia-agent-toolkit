@@ -1,0 +1,29 @@
+name: CI (Python)
+
+on:
+  push:
+    branches: [main]
+    paths: ["python/**", ".github/workflows/ci-python.yml", "packages/ktemia/src/tools.json"]
+  pull_request:
+    paths: ["python/**", ".github/workflows/ci-python.yml", "packages/ktemia/src/tools.json"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+        package: [ktemia, langchain-ktemia]
+    defaults:
+      run:
+        working-directory: python/${{ matrix.package }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Lint
+        run: uvx ruff check src tests
+      - name: Test
+        run: uv run --python ${{ matrix.python }} pytest -q tests --ignore=tests/integration_tests
+      - name: Build
+        run: uv build
