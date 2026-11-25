@@ -82,6 +82,25 @@ Afterwards, on each package's Settings → Publishing access, select "Require
 two-factor authentication and disallow tokens". Trusted publishing keeps
 working; token-based publishing stops being possible.
 
+## JSR (core only)
+
+`ktemia` is also published to JSR as [`@ktemia/ktemia`](https://jsr.io/@ktemia/ktemia),
+from its TypeScript source, by the last step of `publish.yml`. JSR uses the same
+GitHub OIDC token, so there is no JSR token either. Its manifest is
+`packages/ktemia/jsr.json`, and its version must match the npm version.
+
+One-time setup, on jsr.io (sign in with GitHub):
+
+1. Create the scope `@ktemia`.
+2. In that scope, create the package `ktemia`.
+3. Package → Settings → GitHub repository: link `Ktemiaa/ktemia-agent-toolkit`.
+
+After that, any `v*` release publishes there too. Unlike npm, JSR needs no
+placeholder: a package linked to the repository can take its first version
+straight from CI.
+
+Check before a release: `cd packages/ktemia && npx jsr publish --dry-run`.
+
 ## Release
 
 1. **Bump the version in all three packages.** They always move together, even when
@@ -93,6 +112,7 @@ working; token-based publishing stops being possible.
    - `packages/ai-sdk/src/index.ts` (`VERSION`)
    - `packages/langchain/package.json`, including the `ktemia` dependency range
    - `packages/langchain/src/index.ts` (`VERSION`)
+   - `packages/ktemia/jsr.json`
 
    Then `npm install --package-lock-only` so the lockfile follows.
 

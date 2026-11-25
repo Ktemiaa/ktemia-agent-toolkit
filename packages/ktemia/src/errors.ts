@@ -89,7 +89,7 @@ export class KtemiaValidationError extends KtemiaError {
 }
 
 /** Codes that mean "the search found nothing", not "the request was wrong". */
-export const EMPTY_RESULT_CODES = new Set(["NO_RESULTS", "NO_MORE_RESULTS"]);
+export const EMPTY_RESULT_CODES: ReadonlySet<string> = new Set(["NO_RESULTS", "NO_MORE_RESULTS"]);
 
 export function isKtemiaError(error: unknown): error is KtemiaError {
   return error instanceof KtemiaError;

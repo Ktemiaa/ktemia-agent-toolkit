@@ -21,11 +21,16 @@ function read(path: string): { version: string; dependencies?: Record<string, st
 const core = read("../packages/ktemia/package.json");
 const aiSdk = read("../packages/ai-sdk/package.json");
 const langchain = read("../packages/langchain/package.json");
+const jsr = read("../packages/ktemia/jsr.json");
 
 describe("version parity", () => {
   it("every package carries the same version", () => {
     expect(aiSdk.version).toBe(core.version);
     expect(langchain.version).toBe(core.version);
+  });
+
+  it("the JSR manifest carries the npm version", () => {
+    expect(jsr.version).toBe(core.version);
   });
 
   it("the exported constants match their package.json", () => {

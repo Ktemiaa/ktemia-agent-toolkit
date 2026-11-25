@@ -44,6 +44,11 @@ jobs:
       - name: Assert the tag matches every package version
         run: |
           tag="${GITHUB_REF_NAME#v}"
+          jsr="$(node -p "require('./packages/ktemia/jsr.json').version")"
+          if [ "$tag" != "$jsr" ]; then
+            echo "tag $GITHUB_REF_NAME does not match packages/ktemia/jsr.json $jsr" >&2
+            exit 1
+          fi
           for pkg in packages/ktemia packages/ai-sdk packages/langchain; do
             version="$(node -p "require('./$pkg/package.json').version")"
             if [ "$tag" != "$version" ]; then
@@ -68,3 +73,17 @@ jobs:
             fi
             npm publish --workspace "$pkg" --provenance --access public
           done
+
+      # The core is also on JSR (jsr.io/@ktemia/ktemia), published from its
+      # TypeScript source. Authenticated by the same OIDC token: the package
+      # is linked to this repository in its JSR settings. A version already
+      # on JSR is skipped, like npm above.
+      - name: Publish the core to JSR
+        working-directory: packages/ktemia
+        run: |
+          version="$(node -p "require('./jsr.json').version")"
+          if curl -fsS https://jsr.io/@ktemia/ktemia/meta.json | node -e "const m=JSON.parse(require('fs').readFileSync(0,'utf8')); process.exit(m.versions && m.versions['$version'] ? 0 : 1)"; then
+            echo "@ktemia/ktemia@$version is already on JSR, skipping"
+          else
+            npx -y jsr publish
+          fi

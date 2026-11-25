@@ -1,6 +1,7 @@
 # ktemia
 
 [![npm](https://img.shields.io/npm/v/ktemia)](https://www.npmjs.com/package/ktemia)
+[![JSR](https://jsr.io/badges/@ktemia/ktemia)](https://jsr.io/@ktemia/ktemia)
 [![CI](https://github.com/Ktemiaa/ktemia-agent-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/Ktemiaa/ktemia-agent-toolkit/actions/workflows/ci.yml)
 
 The official TypeScript client for the [Ktemia](https://www.ktemia.com/) travel search API. Search and compare flights, hotels, and rental cars across 100+ providers.
@@ -19,6 +20,15 @@ Ktemia searches and compares. It does not book: results carry links that hand of
 ```bash
 npm install ktemia
 ```
+
+Or from [JSR](https://jsr.io/@ktemia/ktemia), for Deno, Bun, or Node:
+
+```bash
+deno add jsr:@ktemia/ktemia      # Deno
+npx jsr add @ktemia/ktemia       # Node, Bun, pnpm, yarn
+```
+
+The JSR package is the same code. Import it as `@ktemia/ktemia` instead of `ktemia`.
 
 ## Usage
 
