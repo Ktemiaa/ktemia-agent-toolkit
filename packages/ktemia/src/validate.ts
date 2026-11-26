@@ -4,6 +4,8 @@
  * Every search spends quota, so a request that can only fail is rejected
  * here instead. These mirror the API's own rules; the API stays the final
  * judge, so anything not checked here is still caught upstream.
+ *
+ * @module
  */
 
 import { KtemiaValidationError } from "./errors.js";
@@ -14,9 +16,13 @@ import type {
   Passengers,
 } from "./types.js";
 
+/** Most passengers on one flight search, adults, children, and infants combined. */
 export const MAX_PASSENGERS = 9;
+/** Longest hotel stay in one search, in nights. */
 export const MAX_NIGHTS = 30;
+/** Fewest legs in a multi-city flight search. */
 export const MIN_LEGS = 2;
+/** Most legs in a multi-city flight search. */
 export const MAX_LEGS = 6;
 
 const DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
@@ -182,6 +188,11 @@ export function checkFlightSearch(
   return body;
 }
 
+/**
+ * Checks a hotel search before it is sent and returns it normalised. Throws
+ * `KtemiaValidationError` for input that can only fail, such as a past date,
+ * a zero-night stay, or more than `MAX_NIGHTS` nights.
+ */
 export function checkHotelSearch(
   params: HotelSearchParams,
   now: Date = new Date(),
@@ -206,6 +217,11 @@ export function checkHotelSearch(
   return { ...params, location, checkin, checkout };
 }
 
+/**
+ * Checks a car search before it is sent and returns it normalised. Throws
+ * `KtemiaValidationError` for input that can only fail, such as a past date,
+ * a drop-off before pickup, or a time not on the hour or half hour.
+ */
 export function checkCarSearch(
   params: CarSearchParams,
   now: Date = new Date(),

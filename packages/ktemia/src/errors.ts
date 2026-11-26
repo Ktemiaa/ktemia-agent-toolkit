@@ -4,10 +4,15 @@
  * Every failure is a `KtemiaError` with a stable `code`, so callers (and
  * agents reading a tool result) can branch on the code instead of parsing
  * the message.
+ *
+ * @module
  */
 
+/** Fields for constructing a `KtemiaError`. */
 export interface KtemiaErrorOptions {
+  /** Stable, uppercase error code, for example "QUOTA_EXCEEDED". */
   code: string;
+  /** Human-readable explanation, safe to show to a user. */
   message: string;
   /** HTTP status, or 0 when the request never reached the API. */
   status: number;
@@ -28,14 +33,25 @@ export interface KtemiaErrorOptions {
  */
 const BRAND = Symbol.for("ktemia.error");
 
+/**
+ * Every failure the client raises. Branch on `code`, which is stable, rather
+ * than on `message`.
+ */
 export class KtemiaError extends Error {
+  /** Stable, uppercase error code from the API, for example "INVALID_ORIGIN" or "SEARCH_EXPIRED". */
   readonly code: string;
+  /** HTTP status, or 0 when the request never reached the API. */
   readonly status: number;
+  /** The request field the error is about, when the API names one. */
   readonly param?: string;
+  /** True when the same call can succeed later without changing anything. Never true for QUOTA_EXCEEDED. */
   readonly retryable: boolean;
+  /** Seconds the API asked us to wait, from `Retry-After`. */
   readonly retryAfter?: number;
+  /** The parsed response body, when there was one. */
   readonly body?: unknown;
 
+  /** Usually created by the client; construct one yourself only in tests. */
   constructor(options: KtemiaErrorOptions) {
     super(options.message);
     this.name = "KtemiaError";
@@ -48,6 +64,7 @@ export class KtemiaError extends Error {
     Object.defineProperty(this, BRAND, { value: true });
   }
 
+  /** Makes `instanceof KtemiaError` work across duplicate copies of this package (ESM and CJS, or two versions). */
   static [Symbol.hasInstance](value: unknown): boolean {
     // Subclasses keep the normal prototype check.
     if (this !== KtemiaError) return Function.prototype[Symbol.hasInstance].call(this, value);
@@ -77,6 +94,7 @@ export class KtemiaError extends Error {
  * Nothing reached the API, so no quota was spent.
  */
 export class KtemiaValidationError extends KtemiaError {
+  /** `param` is the field at fault; `message` explains what to change. */
   constructor(param: string, message: string) {
     super({
       code: "INVALID_INPUT",
@@ -91,6 +109,7 @@ export class KtemiaValidationError extends KtemiaError {
 /** Codes that mean "the search found nothing", not "the request was wrong". */
 export const EMPTY_RESULT_CODES: ReadonlySet<string> = new Set(["NO_RESULTS", "NO_MORE_RESULTS"]);
 
+/** True for any `KtemiaError`, including `KtemiaValidationError`. */
 export function isKtemiaError(error: unknown): error is KtemiaError {
   return error instanceof KtemiaError;
 }

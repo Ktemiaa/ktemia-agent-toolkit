@@ -1,6 +1,6 @@
 {
   "name": "ktemia",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Official TypeScript client for the Ktemia travel search API: compare flights, hotels, and rental cars across 100+ providers",
   "license": "MIT",
   "author": "Ktemia <contact@ktemia.com>",

@@ -26,7 +26,7 @@ import {
   type ToolName,
 } from "ktemia";
 
-export const VERSION = "0.1.1";
+export const VERSION = "0.1.2";
 
 export interface KtemiaToolOptions extends KtemiaOptions {
   /** Reuse an existing client instead of creating one from the options above. */

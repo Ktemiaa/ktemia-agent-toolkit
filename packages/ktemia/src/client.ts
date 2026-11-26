@@ -4,6 +4,8 @@
  * Zero dependencies: it needs only the platform `fetch`, so it runs on Node
  * 20+, Bun, Deno, and edge runtimes. Keep it server-side: the API key must
  * not ship to a browser.
+ *
+ * @module
  */
 
 import { EMPTY_RESULT_CODES, KtemiaError } from "./errors.js";
@@ -25,13 +27,17 @@ import {
   checkText,
 } from "./validate.js";
 
-export const VERSION = "0.1.1";
+/** This package's version. Sent to the API as part of `X-Ktemia-Client`. */
+export const VERSION = "0.1.2";
+/** The production API, used when neither `baseUrl` nor `KTEMIA_API_URL` is set. */
 export const DEFAULT_BASE_URL = "https://api.ktemia.com";
+/** Where to create a free API key. Quoted in the missing-key error. */
 export const API_KEYS_URL = "https://app.ktemia.com/api-keys";
 
 const MAX_RETRY_AFTER_SECONDS = 30;
 const SERVER_RETRY_DELAY_MS = 1000;
 
+/** Options for `new Ktemia()`. Every field is optional. */
 export interface KtemiaOptions {
   /** Defaults to the `KTEMIA_API_KEY` environment variable. */
   apiKey?: string;
@@ -53,9 +59,13 @@ export interface KtemiaOptions {
   sleep?: (ms: number) => Promise<void>;
 }
 
+/** Options for `Ktemia.request()`, the low-level call behind every method. */
 export interface RequestOptions {
+  /** Query-string parameters. Undefined values are dropped and arrays are comma-joined. */
   query?: Record<string, unknown>;
+  /** JSON request body, for POST. */
   body?: unknown;
+  /** Cancels the request when aborted. */
   signal?: AbortSignal;
 }
 
@@ -172,6 +182,7 @@ function compact<T extends object>(obj: T): Partial<T> {
 
 /** Search, paging and details for one vertical. */
 export class VerticalResource<P> {
+  /** Created by `Ktemia`; use `kt.flights`, `kt.hotels`, or `kt.cars` rather than constructing one. */
   constructor(
     private readonly client: Ktemia,
     readonly vertical: Vertical,
@@ -236,6 +247,7 @@ export class VerticalResource<P> {
     });
   }
 
+  /** An empty page for a search that matched nothing, so callers get a page rather than an exception. */
   private empty(token: string, error: KtemiaError): SearchPage {
     return {
       vertical: this.vertical,
@@ -247,7 +259,9 @@ export class VerticalResource<P> {
   }
 }
 
+/** Hotel search, paging, and details, plus guest reviews. Use it as `kt.hotels`. */
 export class HotelsResource extends VerticalResource<HotelSearchParams> {
+  /** Created by `Ktemia`; use `kt.hotels` rather than constructing one. */
   constructor(private readonly kt: Ktemia) {
     super(kt, "hotels", (p) => checkHotelSearch(p));
   }
@@ -272,8 +286,11 @@ export class HotelsResource extends VerticalResource<HotelSearchParams> {
  * ```
  */
 export class Ktemia {
+  /** Flight search: one-way, round trip, and multi-city, across airlines and booking sites. */
   readonly flights: VerticalResource<FlightSearchParams>;
+  /** Hotel search across booking sites, plus guest reviews. */
   readonly hotels: HotelsResource;
+  /** Rental car search across rental companies and booking sites. */
   readonly cars: VerticalResource<CarSearchParams>;
 
   private readonly apiKey?: string;
@@ -284,6 +301,10 @@ export class Ktemia {
   private readonly clientId: string;
   private readonly sleep: (ms: number) => Promise<void>;
 
+  /**
+   * Creates a client. Never throws: a missing key surfaces on the first call
+   * as a `MISSING_API_KEY` error, so building a client at import time is safe.
+   */
   constructor(options: KtemiaOptions = {}) {
     // Resolved now but checked per request, so constructing a client at
     // import time (as frameworks do) never fails a build that has no key.
@@ -387,6 +408,7 @@ export class Ktemia {
     }
   }
 
+  /** One HTTP attempt, with the timeout applied. Retries live in `request()`. */
   private async once<T>(method: "GET" | "POST", url: URL, options: RequestOptions): Promise<T> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), this.timeoutMs);

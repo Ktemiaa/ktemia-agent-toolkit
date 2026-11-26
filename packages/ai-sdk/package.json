@@ -1,6 +1,6 @@
 {
   "name": "@ktemia/ai-sdk",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Ktemia travel search tools for the Vercel AI SDK: let your agent compare flights, hotels, and rental cars across 100+ providers",
   "license": "MIT",
   "author": "Ktemia <contact@ktemia.com>",
@@ -57,7 +57,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "ktemia": "^0.1.1"
+    "ktemia": "^0.1.2"
   },
   "peerDependencies": {
     "ai": "^6.0.0 || ^7.0.0",
