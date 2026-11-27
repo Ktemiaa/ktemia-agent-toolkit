@@ -13,7 +13,8 @@
     "tokenLifetimeNote": "Tokens are opaque and expire one hour after the search starts. Page through with the nextToken from the previous page; when nextToken is absent there are no more pages. If a token has expired, start a new search rather than retrying the same token.",
     "askDoNotGuessNote": "Ask the user for anything missing rather than guessing. A guessed city or date searches the wrong trip, spends quota, and returns confident nonsense.",
     "quotaErrorNote": "On QUOTA_EXCEEDED, stop: the monthly allowance is gone and retrying cannot help. On RATE_LIMIT_EXCEEDED, wait for the Retry-After interval and retry; that one is only a speed limit.",
-    "searchNotBookNote": "Ktemia searches and compares. It does not book, hold, or pay for anything. Booking links in the results hand off to the provider's own site."
+    "searchNotBookNote": "Ktemia searches and compares. It does not book, hold, or pay for anything. Booking links in the results hand off to the provider's own site.",
+    "bookingLinkNote": "Each booking option's providerUrl is a Ktemia link that resolves the seller when it is opened and answers a 302 to the seller's own booking page. Give it to the user exactly as returned: do not unwrap, rewrite, or store it. A link works for one hour; after that it reports BOOKING_LINK_EXPIRED, so run a fresh search rather than reusing an old one. An option whose providerUrl is absent cannot be handed off: offer another seller. providerDomain, when present, names the site the link lands on, so you can say where the user will end up before they open it."
   },
   "enums": {
     "cabin": ["economy", "premiumEconomy", "business", "first"],

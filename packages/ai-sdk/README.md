@@ -67,6 +67,14 @@ const tools = {
 
 Keep the `ktemia_*` names: the tool descriptions refer to each other by them, for example "use ktemia_lookup first".
 
+## Booking links
+
+`ktemia_get_details` returns a `providerUrl` on each booking option. It is a Ktemia link, not the seller's own address: opening it resolves the seller at that moment and answers a `302` to their booking page, with the trip filled in.
+
+Pass it to the user unchanged. Don't unwrap it, rewrite it, or store it for later — a link works for an hour, after which it reports `BOOKING_LINK_EXPIRED` and the search has to be run again. `providerDomain`, when present, names the site the link lands on, so the model can say where the user will end up before they click.
+
+Ktemia compares prices and hands off; it never books, holds, or charges anything.
+
 ## Options
 
 Every factory takes the same options:

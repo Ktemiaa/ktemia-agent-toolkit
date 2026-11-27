@@ -69,6 +69,14 @@ const { usage } = await kt.keyStatus();
 
 A search that matches nothing returns a page with `noResults` set instead of throwing. Search tokens expire one hour after the search starts.
 
+## Booking links
+
+`details()` returns a `providerUrl` on each booking option. It is a Ktemia link, not the seller's own address: opening it resolves the seller at that moment and answers a `302` to their booking page, with the trip filled in.
+
+Give it to the traveller unchanged. Don't unwrap it, rewrite it, or store it for later — a link works for an hour, after which it reports `BOOKING_LINK_EXPIRED` and the search has to be run again. `providerDomain`, when present, names the site the link lands on, so you can show where the traveller will end up before they click.
+
+Ktemia compares prices and hands off; it never books, holds, or charges anything.
+
 ## Errors
 
 Everything throws `KtemiaError` with a stable `code`:
